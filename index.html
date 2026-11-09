@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solène Degrutère · AI Engineer NLP</title>
+<meta name="description" content="Solène Degrutère, AI Engineer et Data Scientist NLP : CV interactif annoté en NER, API, vidéo et questions.">
+<meta property="og:title" content="Solène Degrutère · AI Engineer NLP">
+<meta property="og:description" content="Mon CV, annoté par NER, servi comme une API et passé dans mon propre pipeline.">
+<meta property="og:type" content="website">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:opsz,wght@7..72,400;7..72,500&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: an annotation workbench. Document on the left, label panel on the right; a second tab turns the same data into an API reference. */
+:root {
+  --bg: #F2F4F6;
+  --surface: #FFFFFF;
+  --ink: #161B26;
+  --muted: #5A6372;
+  --line: #DCE0E7;
+  --accent: #0E6B66;
+  --accent-ink: #FFFFFF;
+  --code-bg: #10151F;
+  --code-ink: #D9DEE7;
+
+  --e-poste: #C27A0E;
+  --e-org: #2F63D3;
+  --e-date: #6B7486;
+  --e-tech: #0E8A7E;
+  --e-nlp: #C2416B;
+  --e-diplome: #7B4FD1;
+  --e-soft: #5E7F1F;
+
+  --get: #2F63D3;
+  --post: #0E8A5A;
+
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-text: "Literata", Georgia, "Times New Roman", serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F131A; --surface: #171C25; --ink: #E6E9EF; --muted: #98A1B2; --line: #2A313D;
+    --accent: #3FBFB4; --accent-ink: #06201E; --code-bg: #0A0D13; --code-ink: #D9DEE7;
+    --e-poste: #E9A23B; --e-org: #6D97F2; --e-date: #9AA3B5; --e-tech: #3FBFB4; --e-nlp: #EC6F96; --e-diplome: #A884F0; --e-soft: #9CC45A;
+    --get: #6D97F2; --post: #3DC48C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F131A; --surface: #171C25; --ink: #E6E9EF; --muted: #98A1B2; --line: #2A313D;
+  --accent: #3FBFB4; --accent-ink: #06201E; --code-bg: #0A0D13; --code-ink: #D9DEE7;
+  --e-poste: #E9A23B; --e-org: #6D97F2; --e-date: #9AA3B5; --e-tech: #3FBFB4; --e-nlp: #EC6F96; --e-diplome: #A884F0; --e-soft: #9CC45A;
+  --get: #6D97F2; --post: #3DC48C;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-display); font-size: 15px; line-height: 1.5;
+}
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+
+/* Header */
+header.top { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: end; justify-content: space-between; }
+.id h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1; margin: 0; font-weight: 700; letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.id h1 .tok { border-bottom: 3px solid var(--e-nlp); }
+.id p.role { margin: 10px 0 0; font-size: 1.05rem; color: var(--muted); }
+.id p.role b { color: var(--ink); font-weight: 500; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; font-family: var(--f-mono); font-size: 12.5px; }
+.links a, .links span {
+  color: var(--ink); text-decoration: none; padding: 6px 10px; border: 1px solid var(--line);
+  border-radius: 6px; background: var(--surface);
+}
+.links a:hover { border-color: var(--accent); }
+
+/* Tabs */
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 28px 0 14px; }
+.tabs { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px; }
+.tabs button {
+  font: 500 14px var(--f-display); border: 0; background: transparent; color: var(--muted);
+  padding: 7px 14px; border-radius: 6px; cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.tabs button:focus-visible, button:focus-visible, .chip:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.meta { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* Annotation view */
+.workbench { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+@media (max-width: 880px) { .workbench { grid-template-columns: minmax(0, 1fr); } .panel { order: -1; } }
+
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.doc-head {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--line); font-family: var(--f-mono); font-size: 12px; color: var(--muted);
+}
+.btn {
+  font: 600 12.5px var(--f-mono); border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer;
+}
+.btn.ghost { background: transparent; color: var(--accent); }
+.doc-body { padding: 8px 28px 28px; font-family: var(--f-text); font-size: 16.5px; line-height: 2.05; }
+.doc-body section { max-width: 68ch; }
+.doc-body h2 {
+  font: 600 11px var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  margin: 26px 0 4px; line-height: 1.4;
+}
+.doc-body p { margin: 0 0 12px; }
+
+mark.ent {
+  --c: var(--e-date);
+  color: inherit; background: color-mix(in srgb, var(--c) 16%, transparent);
+  border-bottom: 2px solid var(--c); border-radius: 3px; padding: 1px 3px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  cursor: default; position: relative;
+  transition: background .25s, border-color .25s, opacity .25s;
+}
+mark.ent::after {
+  content: attr(data-label); font: 600 9px var(--f-mono); letter-spacing: 0.06em;
+  color: var(--c); margin-left: 4px; vertical-align: 2px;
+}
+mark.ent[data-label="POSTE"] { --c: var(--e-poste); }
+mark.ent[data-label="ORG"] { --c: var(--e-org); }
+mark.ent[data-label="DATE"] { --c: var(--e-date); }
+mark.ent[data-label="TECH"] { --c: var(--e-tech); }
+mark.ent[data-label="NLP"] { --c: var(--e-nlp); }
+mark.ent[data-label="DIPLOME"] { --c: var(--e-diplome); }
+mark.ent[data-label="SOFT"] { --c: var(--e-soft); }
+.doc-body .lead { font-family: var(--f-display); font-weight: 700; font-size: 15px; }
+mark.ent.pending { background: transparent; border-color: transparent; }
+mark.ent.pending::after { opacity: 0; }
+.doc-body.filtered mark.ent:not(.match) { background: transparent; border-color: transparent; }
+.doc-body.filtered mark.ent:not(.match)::after { opacity: 0; }
+mark.ent.flash { animation: flash 1.1s ease; }
+@keyframes flash { 0%,100% { box-shadow: 0 0 0 0 transparent; } 30% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 45%, transparent); } }
+
+.tip {
+  position: fixed; z-index: 20; pointer-events: none; background: var(--code-bg); color: var(--code-ink);
+  font: 12px var(--f-mono); padding: 8px 10px; border-radius: 6px; line-height: 1.5; max-width: 260px;
+}
+.tip b { color: #fff; }
+
+/* Panel */
+.panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.box h3 { margin: 0 0 10px; font: 600 11px var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.labels { display: grid; gap: 4px; }
+.lab {
+  display: grid; grid-template-columns: 12px 1fr auto; gap: 10px; align-items: center;
+  font: 500 14px var(--f-display); color: var(--ink); background: transparent; border: 1px solid transparent;
+  padding: 6px 8px; border-radius: 6px; cursor: pointer; text-align: left;
+}
+.lab:hover { border-color: var(--line); }
+.lab[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); }
+.lab .sw { width: 12px; height: 12px; border-radius: 3px; background: var(--c); }
+.lab small { font: 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.lab .key { font: 11px var(--f-mono); color: var(--muted); margin-left: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 12px var(--f-mono); color: var(--ink); background: color-mix(in srgb, var(--c) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); padding: 3px 8px; border-radius: 99px; cursor: pointer;
+}
+.chip:hover { border-color: var(--c); }
+.hint { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); }
+
+/* API view */
+.api { display: grid; gap: 10px; }
+.api-intro { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.api-intro h2 { margin: 0; font-size: 1.4rem; font-weight: 700; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ver { font: 600 11px var(--f-mono); padding: 2px 8px; border-radius: 99px; background: var(--ink); color: var(--bg); }
+.api-intro p { margin: 6px 0 0; color: var(--muted); max-width: 70ch; }
+.api-intro code { font-family: var(--f-mono); font-size: 13px; color: var(--ink); }
+
+details.ep { --m: var(--get); border: 1px solid color-mix(in srgb, var(--m) 45%, var(--line)); border-radius: 10px; background: color-mix(in srgb, var(--m) 5%, var(--surface)); }
+details.ep.post { --m: var(--post); }
+details.ep summary {
+  list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding: 10px 14px; cursor: pointer;
+}
+details.ep summary::-webkit-details-marker { display: none; }
+.method { font: 700 12.5px var(--f-mono); color: #fff; background: var(--m); padding: 5px 0; width: 64px; text-align: center; border-radius: 5px; }
+:root[data-theme="dark"] .method { color: #0A0D13; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .method { color: #0A0D13; } }
+.path { font: 600 15px var(--f-mono); word-break: break-all; }
+.sum { color: var(--muted); font-size: 14px; }
+.ep-body { border-top: 1px solid color-mix(in srgb, var(--m) 30%, var(--line)); padding: 14px; display: grid; gap: 12px; }
+.ep-body p { margin: 0; max-width: 70ch; }
+.params { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font: 13px var(--f-mono); }
+.params label { color: var(--muted); }
+.params select, .ep-body textarea {
+  font: 13px var(--f-mono); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px;
+}
+.ep-body textarea { width: 100%; min-height: 96px; resize: vertical; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.exec { border-color: var(--m); background: var(--m); color: #fff; }
+:root[data-theme="dark"] .exec { color: #0A0D13; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .exec { color: #0A0D13; } }
+.out { display: grid; gap: 8px; min-width: 0; }
+.out .lbl { font: 600 11px var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+pre.code {
+  margin: 0; background: var(--code-bg); color: var(--code-ink); font: 12.5px/1.6 var(--f-mono);
+  padding: 12px 14px; border-radius: 8px; overflow-x: auto; max-height: 420px;
+}
+.status { font: 600 12.5px var(--f-mono); }
+.status .ok { color: var(--post); }
+.j-k { color: #8FB8FF; } .j-s { color: #9FE0B5; } .j-n { color: #F5C177; } .j-b { color: #F08FB0; }
+
+footer { margin-top: 28px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+
+
+/* Questions view */
+.aud { margin: -4px 0 14px; color: var(--muted); font-size: 14px; max-width: 75ch; }
+.ask { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+@media (max-width: 880px) { .ask { grid-template-columns: minmax(0, 1fr); } }
+.chat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; min-width: 0; }
+.chat-head { padding: 10px 16px; border-bottom: 1px solid var(--line); font: 12px var(--f-mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: space-between; }
+.thread { padding: 16px; display: flex; flex-direction: column; gap: 14px; max-height: 600px; overflow-y: auto; min-height: 320px; }
+.msg { max-width: 85%; min-width: 0; }
+.msg.q { align-self: flex-end; background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 14px 14px 4px 14px; font-size: 15px; }
+.msg.a { align-self: flex-start; display: grid; gap: 6px; }
+.msg.a .bubble { background: var(--bg); border: 1px solid var(--line); padding: 12px 15px; border-radius: 14px 14px 14px 4px; font: 15.5px/1.65 var(--f-text); }
+.msg.a .bubble p { margin: 0; }
+.msg.a .bubble p + p { margin-top: 8px; }
+.msg.a .src { font: 11.5px var(--f-mono); color: var(--muted); }
+.msg.a .src b { color: var(--accent); font-weight: 600; }
+.msg.a details { font-size: 13px; }
+.msg.a summary { cursor: pointer; font: 12px var(--f-mono); color: var(--muted); }
+.ret { margin-top: 8px; display: grid; gap: 6px; font: 12px var(--f-mono); background: var(--bg); border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; }
+.ret .tok { display: inline-block; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--ink); padding: 1px 6px; border-radius: 4px; margin: 0 4px 4px 0; }
+.ret .hit { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 2px 10px; }
+.ret .hit .track { grid-column: 1 / -1; height: 5px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.ret .hit .fill { height: 100%; background: var(--accent); }
+.ret .hit:not(:nth-child(2)) .fill { background: var(--muted); }
+.ret .num { text-align: right; font-variant-numeric: tabular-nums; }
+.ask-form { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.ask-form input { flex: 1; min-width: 0; font: 15px var(--f-display); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+.ask-form input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.sugg h4 { margin: 14px 0 8px; font: 600 11px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.sugg h4:first-child { margin-top: 0; }
+.sugg .list { display: grid; gap: 6px; }
+.sugg button { text-align: left; font: 14px var(--f-display); color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; cursor: pointer; }
+.sugg button:hover { border-color: var(--accent); }
+.howto { font-size: 13px; color: var(--muted); margin: 0; }
+.howto code { font-family: var(--f-mono); font-size: 12px; color: var(--ink); }
+
+/* Video view: a deliberate single dark look, same in both themes */
+:root {
+  --v-bg: #0C1018; --v-panel: #141A25; --v-ink: #E6E9EF; --v-muted: #8E98AB; --v-line: #252D3A; --v-accent: #3FBFB4;
+  --v-paper: #F7F8FA; --v-paper-ink: #1B2230; --v-paper-muted: #5B6474;
+  --v-pat: #B26B00; --v-date: #5B6474; --v-patho: #C2416B; --v-acte: #2F63D3; --v-med: #0E7F74; --v-neg: #C2521B; --v-poste: #7B4FD1;
+}
+.player { background: var(--v-bg); color: var(--v-ink); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.stage { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; padding: 22px; min-height: 470px; }
+@media (max-width: 780px) { .stage { grid-template-columns: minmax(0, 1fr); padding: 16px; } }
+.paper {
+  position: relative; overflow: hidden; background: var(--v-paper); color: var(--v-paper-ink); border-radius: 6px;
+  padding: 18px 20px; font: 13.5px/1.8 var(--f-text); opacity: 0; transform: translateY(14px) rotate(-1deg);
+  transition: opacity .5s, transform .5s; min-width: 0; align-self: start;
+}
+.paper.in { opacity: 1; transform: none; }
+.paper .ln { filter: blur(3.5px); opacity: .5; transition: filter .35s, opacity .35s; }
+.paper .ln.ok { filter: none; opacity: 1; }
+.paper .ln.hd { font: 600 10.5px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--v-paper-muted); }
+.paper .ln.ti { font: 700 15px var(--f-display); margin: 4px 0 8px; letter-spacing: .02em; }
+.scanbar { position: absolute; left: 0; right: 0; height: 3px; background: var(--v-accent); box-shadow: 0 0 18px 4px color-mix(in srgb, var(--v-accent) 60%, transparent); }
+.paper .e { border-bottom: 2px solid transparent; border-radius: 2px; padding: 0 2px; transition: background .3s, border-color .3s; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.paper .e.on { background: color-mix(in srgb, var(--c) 18%, transparent); border-color: var(--c); }
+.paper .e.on::after { content: attr(data-l); font: 700 8.5px var(--f-mono); color: var(--c); margin-left: 3px; vertical-align: 2px; letter-spacing: .05em; }
+.paper .e[data-l="NEG"].on { text-decoration: line-through; text-decoration-color: var(--c); }
+
+.side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.rail { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rail li { font: 600 11px var(--f-mono); color: var(--v-muted); border: 1px solid var(--v-line); border-radius: 6px; padding: 6px 8px; transition: all .3s; }
+.rail li.done { color: var(--v-ink); }
+.rail li.done::before { content: "✓ "; color: var(--v-accent); }
+.rail li.now { color: var(--v-bg); background: var(--v-accent); border-color: var(--v-accent); }
+.capt { min-height: 54px; }
+.cap-t { font: 700 1.25rem/1.25 var(--f-display); text-wrap: balance; }
+.cap-tool { margin-top: 4px; font: 12px var(--f-mono); color: var(--v-accent); }
+.widget { background: var(--v-panel); border: 1px solid var(--v-line); border-radius: 10px; padding: 14px; min-height: 190px; min-width: 0; }
+.widget small { color: var(--v-muted); font-size: 12px; }
+.file { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.ficon { font: 700 11px var(--f-mono); background: var(--v-patho); color: #fff; padding: 12px 8px; border-radius: 4px; }
+.vcode { margin: 0; font: 12px/1.6 var(--f-mono); color: var(--code-ink); background: var(--v-bg); border-radius: 6px; padding: 10px 12px; overflow-x: auto; max-height: 300px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stats .num { display: block; font: 700 1.6rem var(--f-display); font-variant-numeric: tabular-nums; }
+.bars { display: grid; gap: 10px; }
+.bars .b { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 4px 10px; font-size: 13px; }
+.bars .track { grid-column: 1 / -1; height: 8px; background: var(--v-line); border-radius: 99px; overflow: hidden; }
+.bars .fill { height: 100%; background: var(--v-accent); border-radius: 99px; width: 0; }
+.bars .b:not(:first-child) .fill { background: var(--v-muted); }
+.bars .val { font: 12px var(--f-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+.legend li { display: grid; grid-template-columns: 12px 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
+.legend .sw { width: 12px; height: 12px; border-radius: 3px; background: var(--c); }
+.legend b { font: 600 13px var(--f-mono); font-variant-numeric: tabular-nums; }
+.sumtxt { margin: 0 0 10px; font: 15px/1.65 var(--f-text); min-height: 5em; }
+.caret { display: inline-block; width: 2px; height: 1em; background: var(--v-accent); vertical-align: -2px; margin-left: 1px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.ov { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; padding: 24px; background: color-mix(in srgb, var(--v-bg) 94%, transparent); }
+.ov h2 { margin: 0; font: 700 clamp(1.5rem, 4vw, 2.4rem)/1.1 var(--f-display); max-width: 22ch; text-wrap: balance; }
+.ov p { margin: 0; color: var(--v-muted); font: 13px var(--f-mono); }
+.bigplay { font: 700 15px var(--f-display); background: var(--v-accent); color: var(--v-bg); border: 0; border-radius: 99px; padding: 12px 22px; cursor: pointer; }
+.ctrl { display: flex; gap: 12px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--v-line); }
+.ctrl button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--v-line); background: var(--v-panel); color: var(--v-ink); cursor: pointer; font-size: 13px; flex: none; }
+.ctrl input { flex: 1; min-width: 0; accent-color: var(--v-accent); }
+.ctrl span { font: 12px var(--f-mono); color: var(--v-muted); font-variant-numeric: tabular-nums; flex: none; }
+.chapters { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+.chapters button { font: 12px var(--f-mono); color: var(--v-muted); background: transparent; border: 1px solid var(--v-line); border-radius: 99px; padding: 4px 10px; cursor: pointer; }
+.chapters button:hover { color: var(--v-ink); border-color: var(--v-muted); }
+.vnote { margin: 10px 2px 0; font-size: 13px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (max-width: 520px) { .doc-body { padding: 4px 16px 20px; font-size: 15.5px; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="id">
+      <h1>Solène <span class="tok">Degrutère</span></h1>
+      <p class="role"><b>AI Engineer · Data Scientist NLP</b> · documents médicaux, NER, LLM en production</p>
+    </div>
+    <nav class="links" aria-label="Liens">
+      <a href="https://www.linkedin.com/in/solene-degrutere" target="_blank" rel="noopener">linkedin/solene-degrutere</a>
+      <a href="https://github.com/soleneD05" target="_blank" rel="noopener">github/soleneD05</a>
+      <span>solene.degrutere@orange.fr</span>
+    </nav>
+  </header>
+
+  <div class="bar">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-ner" aria-selected="true" aria-controls="view-ner">Vue annotation</button>
+      <button role="tab" id="tab-api" aria-selected="false" aria-controls="view-api">Vue API</button>
+      <button role="tab" id="tab-video" aria-selected="false" aria-controls="view-video">Vue vidéo</button>
+      <button role="tab" id="tab-ask" aria-selected="false" aria-controls="view-ask">Questions</button>
+    </div>
+    <div class="meta" id="meta"></div>
+  </div>
+  <p class="aud" id="aud"></p>
+
+  <!-- Annotation view -->
+  <div id="view-ner" role="tabpanel" aria-labelledby="tab-ner">
+    <div class="workbench">
+      <article class="doc">
+        <div class="doc-head">
+          <span>cv_solene_degrutere.txt · tâche #2026-11 · annotations validées</span>
+          <span class="row">
+            <button class="btn ghost" id="clear" type="button">Tout afficher</button>
+            <button class="btn" id="replay" type="button">▶ Relancer l'annotation</button>
+          </span>
+        </div>
+        <div class="doc-body" id="doc"></div>
+      </article>
+
+      <aside class="panel">
+        <div class="box">
+          <h3>Labels</h3>
+          <div class="labels" id="labels"></div>
+          <p class="hint">Clique un label pour filtrer le texte, ou tape 1 à 7 au clavier.</p>
+        </div>
+        <div class="box">
+          <h3 id="chips-title">Entités extraites</h3>
+          <div class="chips" id="chips"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- API view -->
+  <div id="view-api" role="tabpanel" aria-labelledby="tab-api" hidden>
+    <div class="api">
+      <div class="api-intro">
+        <h2>solene-api <span class="ver">v2026.11</span> <span class="ver" style="background:var(--post)">OAS 3.1</span></h2>
+        <p>La même chose que l'onglet annotation, servie comme je sers mes pipelines en production : <code>FastAPI</code>, schémas <code>pydantic</code>, réponses JSON. Ouvre un endpoint et clique sur Execute.</p>
+      </div>
+      <div id="endpoints" class="api"></div>
+    </div>
+  </div>
+
+  <!-- Video view -->
+  <div id="view-video" role="tabpanel" aria-labelledby="tab-video" hidden>
+    <div class="player">
+      <div class="stage">
+        <div class="paper" id="paper"><div class="scanbar" id="scanbar" hidden></div><div id="vlines"></div></div>
+        <div class="side">
+          <ol class="rail" id="rail"></ol>
+          <div class="capt"><div class="cap-t" id="capT"></div><div class="cap-tool" id="capTool"></div></div>
+          <div class="widget">
+            <div id="w-ingest" hidden>
+              <div class="file"><span class="ficon">PDF</span><div><b>cv_solene_degrutere.pdf</b><br><small>scan · 1 page · 224 Ko</small></div></div>
+              <pre class="vcode">POST /documents  →  202 Accepted
+job_id : "7f3a-c21e"
+statut : en file d'attente (Valkey)</pre>
+            </div>
+            <div id="w-ocr" hidden>
+              <div class="stats">
+                <div><span class="num" id="ocrChars">0</span><small>caractères</small></div>
+                <div><span class="num" id="ocrLines">0</span><small>lignes lues</small></div>
+                <div><span class="num">0,97</span><small>confiance OCR</small></div>
+              </div>
+            </div>
+            <div id="w-class" hidden><div class="bars" id="bars"></div></div>
+            <div id="w-ner" hidden><ul class="legend" id="legend"></ul></div>
+            <div id="w-sum" hidden><p class="sumtxt" id="sumTxt"></p><small>Résumé relu par la candidate, qui le trouve très juste</small></div>
+            <div id="w-json" hidden><pre class="vcode" id="jsonOut"></pre></div>
+          </div>
+        </div>
+        <div class="ov" id="ovIntro">
+          <p>Mon pipeline de documents médicaux, appliqué à mon propre CV</p>
+          <h2>Et si je passais mon CV dans mon pipeline ?</h2>
+          <button class="bigplay" id="bigplay" type="button">▶ Lancer la vidéo · 36 s</button>
+        </div>
+        <div class="ov" id="ovOutro" hidden>
+          <p>Verdict du modèle : inviter en entretien</p>
+          <h2>Solène Degrutère, AI Engineer NLP</h2>
+          <p>solene.degrutere@orange.fr</p>
+          <button class="bigplay" id="vreplay" type="button">↻ Revoir</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <button id="vplay" type="button" aria-label="Lecture">▶</button>
+        <input type="range" id="vseek" min="0" max="36" step="0.05" value="0" aria-label="Position dans la vidéo">
+        <span id="vtime">0:00 / 0:36</span>
+      </div>
+      <div class="chapters" id="chapters"></div>
+    </div>
+    <p class="vnote">Mon CV passe dans une version simplifiée du pipeline que je développe chez PraxySanté. Les scores sont là pour le fun.</p>
+  </div>
+
+  <!-- Questions view -->
+  <div id="view-ask" role="tabpanel" aria-labelledby="tab-ask" hidden>
+    <div class="ask">
+      <div class="chat">
+        <div class="chat-head"><span>Demandez à Solène · RAG local</span><span id="kbinfo"></span></div>
+        <div class="thread" id="thread" aria-live="polite"></div>
+        <form class="ask-form" id="askForm">
+          <input id="askInput" type="text" autocomplete="off" placeholder="Ex. : A-t-elle déjà travaillé avec des données de santé ?" aria-label="Votre question">
+          <button class="btn" type="submit">Envoyer</button>
+        </form>
+      </div>
+      <aside class="panel">
+        <div class="box sugg" id="sugg"></div>
+        <div class="box">
+          <h3>Comment ça marche</h3>
+          <p class="howto">Votre question est découpée en tokens, puis comparée à mon parcours, découpé en passages, avec un score <code>BM25</code>. Le passage le mieux classé fournit la réponse. Tout tourne dans votre navigateur : aucune question n'est envoyée ailleurs.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    <span>Page construite comme un outil d'annotation : texte brut, spans typés, export JSON.</span>
+    <a href="cv-solene-degrutere.pdf" download style="color:var(--accent)">Télécharger le CV en PDF</a>
+  </footer>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(function () {
+  const LABELS = [
+    { id: "POSTE",   name: "Poste",        var: "--e-poste" },
+    { id: "ORG",     name: "Organisation", var: "--e-org" },
+    { id: "DATE",    name: "Date",         var: "--e-date" },
+    { id: "TECH",    name: "Outil / tech", var: "--e-tech" },
+    { id: "NLP",     name: "Méthode NLP / ML", var: "--e-nlp" },
+    { id: "DIPLOME", name: "Diplôme",      var: "--e-diplome" },
+    { id: "SOFT",    name: "Gestion / savoir-être", var: "--e-soft" }
+  ];
+
+  const DOC = [
+    { h: "Expérience · actuelle", p: [
+      "[Ingénieure IA|POSTE] chez [PraxySanté|ORG], depuis [septembre 2024|DATE]. Je maintiens et déploie en production une [API FastAPI|TECH] multi-pipeline qui fait du [résumé|NLP], de l'[extraction d'information|NLP], de la reformulation et de la [classification de documents|NLP] médicaux. J'écris les [tests automatisés|TECH] avec [pytest|TECH] et je gère les mises en production sur [Scaleway|TECH].",
+      "Pour pré-annoter des documents médicaux en [NER|NLP], je développe un workflow LLM avec [LangGraph|TECH] et [LangChain|TECH], dont les sorties arrivent directement dans [Label Studio|TECH].",
+      "J'ai construit un pipeline complet de traitement de documents (PDF, DOCX, TXT avec [pdfplumber|TECH] et [PaddleOCR|TECH]) et comparé quatre méthodes de classification : mots-clés, NER, [machine learning|NLP] et [LLM|NLP]. J'extrais l'identité et le NIR en combinant LLM, règles métier et [expressions régulières|NLP].",
+      "J'ai aussi [fine-tuné|NLP] [GLiNER|TECH] sur des [données médicales synthétiques|NLP] que j'ai générées et annotées moi-même, avec un benchmark avant / après."
+    ]},
+    { h: "Expérience · recherche", p: [
+      "[Ingénieure NLP|POSTE] à la [SNCF, Direction de la Recherche|ORG], de [mars 2023|DATE] à [décembre 2023|DATE]. Sujet : identifier automatiquement les causes d'accidents du travail dans des déclarations écrites en texte libre. État de l'art, [analyse linguistique|NLP] des rapports, puis comparaison de [classification supervisée|NLP], de [topic modeling|NLP] et de [clustering|NLP].",
+      "Coautrice d'un article à [CORIA-TALN|ORG] en [2023|DATE] : participation à DEFT, réponse automatique à des QCM d'examens de pharmacie."
+    ]},
+    { h: "Projet de formation", p: [
+      "FROODIES, application IA de recommandation personnalisée de restaurants parisiens ([2024–2025|DATE]) : application web interactive en [Streamlit|TECH], démarche [Design Thinking|SOFT] avec un [plan de projet|SOFT] complet, jeu de [données synthétiques|NLP] de restaurants, [système de recommandation|NLP] par similarité et [chatbot conversationnel|NLP] intégré."
+    ]},
+    { h: "Formation", p: [
+      "[Formation Data & IA Engineer, cheffe de projet IA|DIPLOME] chez [Simplon|ORG] ([2024–2025|DATE]) : [Python|TECH] orienté objet et packaging, [SQL|TECH], [MongoDB|TECH], [machine learning|NLP] et [deep learning|NLP] (LLM, chatbot, [séries temporelles|NLP]), visualisation, [gestion de projet IA|SOFT] et introduction à [Docker|TECH].",
+      "[Master Linguistique, Informatique et Technologie du Langage|DIPLOME] à l'[Université Toulouse Jean Jaurès|ORG] ([2021–2023|DATE]) : TAL, [NER|NLP], [extraction d'information|NLP], [apprentissage automatique|NLP], programmation en [Python|TECH], [XML|TECH] et [R|TECH], [UX et ergonomie|SOFT], syntaxe expérimentale et cohérence du discours.",
+      "[Licence Sciences du Langage, de l'Information et de la Communication|DIPLOME] à l'[Université de Limoges|ORG] ([2018–2021|DATE]) : manipulation de fichiers [XML|TECH] et [HTML|TECH], sémantique, syntaxe, rhétorique."
+    ]},
+    { h: "Compétences", p: [
+      { cat: "programmation", lead: "Programmation et données.", t: "[Python|TECH] avec [Pandas|TECH], [NumPy|TECH], [scikit-learn|TECH], [NLTK|TECH], [spaCy|TECH] et [PyTorch|TECH], ainsi que [R|TECH]. Bases de données [SQL|TECH] et [MongoDB|TECH], formats structurés [CSV|TECH], [JSON|TECH] et [XML|TECH]. Visualisation avec [Matplotlib|TECH], [Seaborn|TECH] et [Plotly|TECH]." },
+      { cat: "outils", lead: "Outils.", t: "[Jupyter Notebook|TECH], [GitHub|TECH], [uv|TECH], [Poetry|TECH], [Docker|TECH], [dbt|TECH], [Figma|TECH]." },
+      { cat: "parsing", lead: "Parsing de documents et web scraping.", t: "[pdfplumber|TECH], [pypdf|TECH], [PaddleOCR|TECH], [BeautifulSoup|TECH]." },
+      { cat: "api_deploiement", lead: "API et déploiement.", t: "[Streamlit|TECH], [FastAPI|TECH], [pydantic|TECH]. Déploiement avec [Gunicorn|TECH] et [Uvicorn|TECH] sur [Scaleway|TECH], jobs asynchrones avec [Valkey|TECH]. [Tests automatisés|TECH] avec [pytest|TECH] et [maintenance d'API en production|TECH]." },
+      { cat: "llm", lead: "IA générative et LLM.", t: "[RAG|NLP], [embeddings|NLP], [orchestration multi-LLM en production|NLP] avec [Mistral|TECH], [Qwen|TECH] et [Llama|TECH] via [Scaleway|TECH], [Fireworks|TECH] et [Replicate|TECH]. [OpenAI API|TECH], [Mistral API|TECH], [prompt engineering|NLP]." },
+      { cat: "nlp", lead: "NLP / TAL.", t: "[Extraction d'information|NLP], [NER|NLP], [classification|NLP], [topic modeling|NLP], [détection de négation|NLP], [fuzzy matching|NLP]." },
+      { cat: "machine_learning", lead: "Machine learning.", t: "[Régression linéaire|NLP] et [régression logistique|NLP], [arbres de décision|NLP], [Random Forest|NLP], [gradient boosting|NLP] avec [XGBoost|TECH], [SVM|NLP], [k-NN|NLP], [Naive Bayes|NLP], [k-means|NLP]." },
+      { cat: "deep_learning", lead: "Fine-tuning et deep learning.", t: "[Hugging Face Transformers|TECH], [PyTorch|TECH], [BERT|NLP], [GLiNER|TECH], optimisation d'hyperparamètres avec [Optuna|TECH]." },
+      { cat: "evaluation", lead: "Évaluation de modèles.", t: "[Validation croisée|NLP], métriques de [précision, rappel et F1|NLP], [benchmarks comparatifs|NLP]." },
+      { cat: "donnees", lead: "Données et terminologies.", t: "[Campagnes d'annotation|NLP] avec [Label Studio|TECH], [génération de données synthétiques|NLP]. Terminologies médicales [CIM-10|TECH], [CIM-11|TECH] et [SNOMED|TECH]." },
+      { cat: "gestion_projet", lead: "Gestion de projet et analyse.", t: "[Méthodes agiles|SOFT], [Design Thinking|SOFT], [planification|SOFT], [prévision budgétaire|SOFT], [structuration de projet|SOFT], [rédaction de rapports scientifiques|SOFT], [analyse de données|SOFT]." },
+      { cat: "savoir_etre", lead: "Savoir-être.", t: "[Esprit d'équipe|SOFT], [bon relationnel|SOFT], [curiosité et envie d'apprendre|SOFT], [rigueur|SOFT], [autonomie|SOFT], [communication écrite professionnelle FR/EN|SOFT]." },
+      { cat: "langues", lead: "Langues.", t: "[Français, langue maternelle|SOFT]. [Anglais intermédiaire B2|SOFT], à l'aise en lecture et rédaction technique." }
+    ]},
+    { h: "Hors écran", p: [
+      "Dix ans de théâtre et spectatrice assidue, préparation d'un semi-marathon pour 2027, cuisine, engagement local et associatif."
+    ]}
+  ];
+
+  const docEl = document.getElementById("doc");
+  const ents = [];
+  const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const score = t => { let h = 0; for (const c of t) h = (h * 31 + c.charCodeAt(0)) >>> 0; return (0.86 + (h % 14) / 100).toFixed(2); };
+
+  // Parse the [text|LABEL] markup into spans
+  let offset = 0;
+  docEl.innerHTML = DOC.map(sec => {
+    const paras = sec.p.map(item => {
+      const raw = typeof item === "string" ? item : item.t;
+      const cat = typeof item === "string" ? null : item.cat;
+      let html = item.lead ? `<b class="lead">${esc(item.lead)}</b> ` : "", last = 0, plain = "";
+      raw.replace(/\[([^\]|]+)\|([A-Z]+)\]/g, (m, text, label, idx) => {
+        const before = raw.slice(last, idx);
+        html += esc(before); plain += before;
+        const start = offset + plain.length;
+        ents.push({ text, label, start, end: start + text.length, score: Number(score(text)), ...(cat ? { categorie: cat } : {}) });
+        html += `<mark class="ent" data-label="${label}" data-text="${esc(text)}" data-score="${score(text)}">${esc(text)}</mark>`;
+        plain += text; last = idx + m.length;
+      });
+      const rest = raw.slice(last); html += esc(rest); plain += rest;
+      offset += plain.length + 1;
+      return `<p>${html}</p>`;
+    }).join("");
+    return `<section><h2>${esc(sec.h)}</h2>${paras}</section>`;
+  }).join("");
+
+  const marks = [...docEl.querySelectorAll("mark.ent")];
+  document.getElementById("meta").innerHTML = `<b>${ents.length}</b> entités · <b>${LABELS.length}</b> labels · modèle <b>solene-ner</b>`;
+
+  // Label panel
+  const labelsEl = document.getElementById("labels");
+  let active = null;
+  labelsEl.innerHTML = LABELS.map((l, i) => {
+    const n = ents.filter(e => e.label === l.id).length;
+    return `<button class="lab" type="button" aria-pressed="false" data-id="${l.id}" style="--c:var(${l.var})"><span class="sw"></span><span>${l.name}<span class="key">${i + 1}</span></span><small>${n}</small></button>`;
+  }).join("");
+
+  const chipsEl = document.getElementById("chips");
+  const chipsTitle = document.getElementById("chips-title");
+  function renderChips() {
+    const seen = new Map();
+    ents.filter(e => !active || e.label === active).forEach(e => { if (!seen.has(e.text)) seen.set(e.text, e.label); });
+    const lab = LABELS.find(l => l.id === active);
+    chipsTitle.textContent = lab ? `${lab.name} · ${seen.size}` : `Entités extraites · ${seen.size}`;
+    chipsEl.innerHTML = [...seen].map(([t, l]) => {
+      const v = LABELS.find(x => x.id === l).var;
+      return `<button class="chip" type="button" data-text="${esc(t)}" style="--c:var(${v})">${esc(t)}</button>`;
+    }).join("");
+  }
+  function setFilter(id) {
+    active = active === id ? null : id;
+    labelsEl.querySelectorAll(".lab").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === active)));
+    docEl.classList.toggle("filtered", !!active);
+    marks.forEach(m => m.classList.toggle("match", m.dataset.label === active));
+    renderChips();
+  }
+  labelsEl.addEventListener("click", e => { const b = e.target.closest(".lab"); if (b) setFilter(b.dataset.id); });
+  document.getElementById("clear").addEventListener("click", () => { if (active) setFilter(active); });
+  document.addEventListener("keydown", e => {
+    if (e.target.matches("input, textarea, select")) return;
+    const n = Number(e.key); if (n >= 1 && n <= LABELS.length && !document.getElementById("view-ner").hidden) setFilter(LABELS[n - 1].id);
+  });
+  chipsEl.addEventListener("click", e => {
+    const c = e.target.closest(".chip"); if (!c) return;
+    const hits = marks.filter(m => m.dataset.text === c.dataset.text);
+    hits.forEach(m => { m.classList.remove("flash"); void m.offsetWidth; m.classList.add("flash"); });
+    if (hits[0]) hits[0].scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  renderChips();
+
+  // Replay annotation
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let timers = [];
+  document.getElementById("replay").addEventListener("click", () => {
+    timers.forEach(clearTimeout); timers = [];
+    if (active) setFilter(active);
+    if (reduce) return;
+    marks.forEach(m => m.classList.add("pending"));
+    marks.forEach((m, i) => timers.push(setTimeout(() => m.classList.remove("pending"), 300 + i * 55)));
+  });
+
+  // Tooltip
+  const tip = document.getElementById("tip");
+  docEl.addEventListener("mouseover", e => {
+    const m = e.target.closest("mark.ent"); if (!m) return;
+    const l = LABELS.find(x => x.id === m.dataset.label);
+    tip.innerHTML = `<b>${esc(m.dataset.text)}</b><br>label : ${l.id} (${l.name})<br>score : ${m.dataset.score}`;
+    tip.hidden = false;
+  });
+  docEl.addEventListener("mousemove", e => {
+    if (tip.hidden) return;
+    const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+    tip.style.left = x + "px"; tip.style.top = (e.clientY + 16) + "px";
+  });
+  docEl.addEventListener("mouseout", e => { if (e.target.closest("mark.ent")) tip.hidden = true; });
+
+  // ---------- API view ----------
+  const CATS = [...new Set(ents.map(e => e.categorie).filter(Boolean))];
+  const uniq = (label) => [...new Set(ents.filter(e => e.label === label).map(e => e.text))];
+  const API = [
+    { m: "GET", path: "/profil", sum: "Qui je suis, en une réponse",
+      desc: "Résumé du profil et de ce que je cherche.",
+      run: () => ({ nom: "Solène Degrutère", titre: "AI Engineer · Data Scientist NLP", specialites: ["NLP médical", "NER", "LLM en production", "API FastAPI"], parcours: "linguistique → TAL → ingénierie IA", experience_annees: 2.7, langues: { francais: "natif", anglais: "B2" }, disponible: true }) },
+    { m: "GET", path: "/experiences", sum: "Postes, organisations et réalisations",
+      desc: "Liste ordonnée, du plus récent au plus ancien.",
+      run: () => [
+        { poste: "Ingénieure IA", organisation: "PraxySanté", debut: "2024-09", fin: null, realisations: ["API FastAPI multi-pipeline en production (résumé, extraction, classification)", "Workflow LangGraph de pré-annotation NER vers Label Studio", "Benchmark de 4 méthodes de classification de documents médicaux", "Fine-tuning GLiNER sur données synthétiques"] },
+        { poste: "Ingénieure NLP", organisation: "SNCF, Direction de la Recherche", debut: "2023-03", fin: "2023-12", realisations: ["Extraction des causes d'accidents du travail en texte libre", "Classification, topic modeling, clustering"] }
+      ] },
+    { m: "GET", path: "/skills", sum: "Toutes les compétences, par catégorie",
+      desc: "Calculé à partir des entités annotées dans la section Compétences de l'onglet annotation.",
+      params: [{ name: "categorie", options: ["all"].concat(CATS) }],
+      run: (p) => {
+        const c = p.categorie || "all";
+        const out = {};
+        (c === "all" ? CATS : [c]).forEach(k => out[k] = [...new Set(ents.filter(e => e.categorie === k).map(e => e.text))]);
+        return { categorie: c, total: Object.values(out).flat().length, competences: out };
+      } },
+    { m: "GET", path: "/entities", sum: "Export brut des annotations",
+      desc: "Format proche d'un export Label Studio : texte, label, offsets, score.",
+      params: [{ name: "label", options: ["ALL"].concat(LABELS.map(l => l.id)) }],
+      run: (p) => {
+        const list = ents.filter(e => !p.label || p.label === "ALL" || e.label === p.label);
+        return { count: list.length, results: list };
+      } },
+    { m: "POST", path: "/contact", sum: "Me proposer un poste",
+      desc: "Renseigne le corps de la requête, puis exécute.",
+      body: { entreprise: "Votre entreprise", poste: "Ingénieure NLP", message: "Bonjour Solène, on aimerait échanger avec vous." },
+      run: (p, body) => ({ status: "recu", entreprise: body.entreprise ?? null, poste: body.poste ?? null, prochaine_etape: "Écrivez-moi directement, je réponds vite.", contact: { email: "solene.degrutere@orange.fr", telephone: "06 48 44 42 72", linkedin: "https://www.linkedin.com/in/solene-degrutere" } }),
+      code: 201 }
+  ];
+
+  function hl(json) {
+    return esc(json).replace(/("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?/g, (m, str, colon, kw) => {
+      if (str) return colon ? `<span class="j-k">${str}</span>${colon}` : `<span class="j-s">${str}</span>`;
+      if (kw) return `<span class="j-b">${kw}</span>`;
+      return `<span class="j-n">${m}</span>`;
+    });
+  }
+
+  const epEl = document.getElementById("endpoints");
+  epEl.innerHTML = API.map((a, i) => `
+    <details class="ep ${a.m === "POST" ? "post" : ""}" ${i === 2 ? "open" : ""}>
+      <summary><span class="method">${a.m}</span><span class="path">${a.path}</span><span class="sum">${a.sum}</span></summary>
+      <div class="ep-body">
+        <p>${a.desc}</p>
+        ${a.params ? `<div class="params">${a.params.map(p => `<label for="p-${i}-${p.name}">${p.name}</label><select id="p-${i}-${p.name}" data-name="${p.name}">${p.options.map(o => `<option>${o}</option>`).join("")}</select>`).join("")}</div>` : ""}
+        ${a.body ? `<label class="out"><span class="lbl">Request body · application/json</span><textarea id="b-${i}" spellcheck="false">${esc(JSON.stringify(a.body, null, 2))}</textarea></label>` : ""}
+        <div class="row"><button class="btn exec" type="button" data-i="${i}">Execute</button></div>
+        <div class="out" id="o-${i}" hidden></div>
+      </div>
+    </details>`).join("");
+
+  epEl.addEventListener("click", e => {
+    const b = e.target.closest(".exec"); if (!b) return;
+    const i = Number(b.dataset.i), a = API[i], out = document.getElementById("o-" + i);
+    const params = {}; epEl.querySelectorAll(`[id^="p-${i}-"]`).forEach(s => params[s.dataset.name] = s.value);
+    let body = {};
+    if (a.body) {
+      try { body = JSON.parse(document.getElementById("b-" + i).value); }
+      catch (err) {
+        out.hidden = false;
+        out.innerHTML = `<span class="status">422 Unprocessable Entity</span><pre class="code">${hl(JSON.stringify({ detail: "Le corps de la requête n'est pas du JSON valide. Vérifie les guillemets et les virgules." }, null, 2))}</pre>`;
+        return;
+      }
+    }
+    const qs = Object.entries(params).filter(([, v]) => v && v !== "all" && v !== "ALL").map(([k, v]) => `${k}=${v}`).join("&");
+    const url = `https://api.solene.dev${a.path}${qs ? "?" + qs : ""}`;
+    const curl = a.m === "POST"
+      ? `curl -X POST '${url}' \\\n  -H 'Content-Type: application/json' \\\n  -d '${JSON.stringify(body)}'`
+      : `curl -X GET '${url}' -H 'accept: application/json'`;
+    out.hidden = false;
+    out.innerHTML = `<span class="lbl">curl</span><pre class="code">${esc(curl)}</pre><span class="lbl">Réponse</span><pre class="code">…</pre>`;
+    const ms = 40 + Math.round(Math.random() * 90);
+    setTimeout(() => {
+      const res = JSON.stringify(a.run(params, body), null, 2);
+      out.innerHTML = `<span class="lbl">curl</span><pre class="code">${esc(curl)}</pre><span class="status"><span class="ok">${a.code || 200} ${a.code === 201 ? "Created" : "OK"}</span> · ${ms} ms</span><pre class="code">${hl(res)}</pre>`;
+    }, reduce ? 0 : ms * 4);
+  });
+
+  // ---------- Video view ----------
+  const V = { DUR: 36, t: 0, playing: false, last: 0 };
+  const SC = [
+    { id: "intro", t0: 0, t1: 3 },
+    { id: "ingest", t0: 3, t1: 7, name: "Ingestion", cap: "Un recruteur dépose mon CV", tool: "POST /documents · FastAPI · file d'attente Valkey" },
+    { id: "ocr", t0: 7, t1: 12, name: "OCR", cap: "Mon CV devient du texte", tool: "PaddleOCR · pdfplumber" },
+    { id: "class", t0: 12, t1: 17, name: "Classification", cap: "Quel profil est-ce ?", tool: "classifieur maison, en toute objectivité" },
+    { id: "ner", t0: 17, t1: 23, name: "NER", cap: "Postes, outils, méthodes… et hobbies", tool: "GLiNER fine-tuné sur moi-même" },
+    { id: "sum", t0: 23, t1: 28, name: "Résumé", cap: "Mon parcours en trois phrases", tool: "LLM en production · prompt engineering" },
+    { id: "json", t0: 28, t1: 32, name: "Réponse API", cap: "Le verdict, en JSON", tool: "pydantic · pytest · Scaleway" },
+    { id: "outro", t0: 32, t1: 36.01 }
+  ];
+  const STEPS = SC.filter(x => x.name);
+  const VLAB = {
+    NOM: { n: "Nom", c: "--v-pat" }, POSTE: { n: "Poste", c: "--v-poste" }, ORG: { n: "Organisation", c: "--v-acte" },
+    DATE: { n: "Date", c: "--v-date" }, TECH: { n: "Outil", c: "--v-med" }, METHODE: { n: "Méthode", c: "--v-patho" },
+    HOBBY: { n: "Hobby", c: "--v-neg" }
+  };
+  const VDOC = [
+    { cls: "hd", t: "Curriculum vitae · 1 page" },
+    { cls: "ti", t: "AI Engineer – Data Scientist NLP" },
+    "[Solène Degrutère|NOM] · github soleneD05",
+    "[Ingénieure IA|POSTE] chez [PraxySanté|ORG] depuis [septembre 2024|DATE] : API [FastAPI|TECH] en production, [résumé|METHODE] et [extraction d'information|METHODE] sur des documents médicaux.",
+    "Workflow [LangGraph|TECH] de pré-annotation [NER|METHODE], [fine-tuning|METHODE] de [GLiNER|TECH] sur données synthétiques.",
+    "[Ingénieure NLP|POSTE] à la [SNCF|ORG] en [2023|DATE] : causes d'accidents du travail, [classification|METHODE] et [topic modeling|METHODE].",
+    "Master TAL à l'[Université Toulouse Jean Jaurès|ORG], formation Data & IA chez [Simplon|ORG].",
+    "Hors écran : [théâtre|HOBBY] depuis dix ans, [semi-marathon 2027|HOBBY], [cuisine|HOBBY]."
+  ];
+  const markup = raw => {
+    let h = "", last = 0;
+    raw.replace(/\[([^\]|]+)\|([A-Z]+)\]/g, (m, text, lab, idx) => {
+      h += esc(raw.slice(last, idx)) + `<span class="e" data-l="${lab}" style="--c:var(${VLAB[lab].c})">${esc(text)}</span>`;
+      last = idx + m.length;
+    });
+    return h + esc(raw.slice(last));
+  };
+  const $ = id => document.getElementById(id);
+  $("vlines").innerHTML = VDOC.map(l => typeof l === "string" ? `<div class="ln">${markup(l)}</div>` : `<div class="ln ${l.cls}">${esc(l.t)}</div>`).join("");
+  const vlines = [...$("vlines").children];
+  const vents = [...$("vlines").querySelectorAll(".e")];
+  const totalChars = vlines.reduce((n, l) => n + l.textContent.length, 0);
+  $("rail").innerHTML = STEPS.map(x => `<li>${x.name}</li>`).join("");
+  const railItems = [...$("rail").children];
+  $("chapters").innerHTML = STEPS.map((x, i) => `<button type="button" data-i="${i}">${x.name}</button>`).join("");
+  const CLS = [["AI Engineer NLP", .91], ["Linguiste reconvertie", .06], ["Comédienne", .02], ["Semi-marathonienne", .01]];
+  $("bars").innerHTML = CLS.map(([n]) => `<div class="b"><span>${n}</span><span class="val">0.00</span><div class="track"><div class="fill"></div></div></div>`).join("");
+  const barEls = [...$("bars").children];
+  $("legend").innerHTML = Object.entries(VLAB).map(([k, v]) => `<li style="--c:var(${v.c})"><span class="sw"></span><span>${v.n}</span><b data-k="${k}">0</b></li>`).join("");
+  const SUM = "Linguiste devenue ingénieure IA : depuis 2024, elle met en production des LLM qui résument et analysent des documents médicaux, après une année de recherche NLP à la SNCF. Parle couramment Python, FastAPI et expressions régulières. Dix ans de théâtre, donc très à l'aise en démo.";
+  const JSONL = JSON.stringify({
+    document_type: "cv", candidate: "Solène Degrutère", profil: "AI Engineer · Data Scientist NLP", confiance: 0.91,
+    competences_cles: ["FastAPI", "LangGraph", "GLiNER", "LLM en production", "NER médical"],
+    soft_skills: ["rigueur", "curiosité", "à l'aise en démo"],
+    recommandation: "inviter en entretien", latence_ms: 1840
+  }, null, 2).split("\n");
+  const W = ["ingest", "ocr", "class", "ner", "sum", "json"];
+  const clamp = x => Math.max(0, Math.min(1, x));
+  const pr = (a, b) => clamp((V.t - a) / (b - a));
+  const ease = x => 1 - Math.pow(1 - x, 3);
+  const fmt = x => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+
+  function vrender() {
+    const t = V.t;
+    $("vseek").value = t;
+    $("vtime").textContent = `${fmt(t)} / ${fmt(V.DUR)}`;
+    const cur = SC.find(x => t >= x.t0 && t < x.t1) || SC[SC.length - 1];
+    $("ovIntro").hidden = !(t < 3);
+    $("bigplay").hidden = V.playing;
+    $("ovOutro").hidden = !(t >= 32);
+    $("paper").classList.toggle("in", t >= 3);
+    vlines.forEach((ln, i) => ln.classList.toggle("ok", t >= 7 + (i + 1) * (5 / (vlines.length + 1))));
+    $("scanbar").hidden = !(t >= 7 && t < 12);
+    $("scanbar").style.top = (pr(7, 12) * 100) + "%";
+    vents.forEach((e, k) => e.classList.toggle("on", t >= 17.3 + k * (5.2 / vents.length)));
+    railItems.forEach((li, i) => { li.classList.toggle("done", t >= STEPS[i].t1); li.classList.toggle("now", STEPS[i] === cur); });
+    $("capT").textContent = cur.cap || "";
+    $("capTool").textContent = cur.tool || "";
+    W.forEach(id => $("w-" + id).hidden = cur.id !== id);
+    if (cur.id === "ocr") {
+      $("ocrChars").textContent = Math.floor(totalChars * pr(7, 12));
+      $("ocrLines").textContent = vlines.filter(l => l.classList.contains("ok")).length + "/" + vlines.length;
+    }
+    if (cur.id === "class") {
+      const e = ease(pr(12.3, 15));
+      barEls.forEach((b, i) => { b.querySelector(".fill").style.width = (CLS[i][1] * e * 100) + "%"; b.querySelector(".val").textContent = (CLS[i][1] * e).toFixed(2); });
+    }
+    if (cur.id === "ner") {
+      $("legend").querySelectorAll("b").forEach(b => b.textContent = vents.filter(e => e.dataset.l === b.dataset.k && e.classList.contains("on")).length);
+    }
+    if (cur.id === "sum") {
+      const n = Math.floor(SUM.length * pr(23.2, 27.4));
+      $("sumTxt").innerHTML = esc(SUM.slice(0, n)) + (n < SUM.length ? '<span class="caret"></span>' : "");
+    }
+    if (cur.id === "json") {
+      $("jsonOut").innerHTML = '<span class="j-n">200 OK</span>\n' + hl(JSONL.slice(0, Math.ceil(JSONL.length * pr(28, 30.5))).join("\n"));
+    }
+  }
+  function vbtn() { $("vplay").textContent = V.playing ? "❚❚" : "▶"; $("vplay").setAttribute("aria-label", V.playing ? "Pause" : "Lecture"); }
+  function vtick(ts) {
+    if (!V.playing) return;
+    V.t = Math.min(V.DUR, V.t + (ts - V.last) / 1000); V.last = ts;
+    if (V.t >= V.DUR) V.playing = false;
+    vrender(); vbtn();
+    if (V.playing) requestAnimationFrame(vtick);
+  }
+  function vplay() { if (V.t >= V.DUR) V.t = 0; V.playing = true; V.last = performance.now(); vbtn(); vrender(); requestAnimationFrame(vtick); }
+  function vpause() { V.playing = false; vbtn(); vrender(); }
+  $("vplay").addEventListener("click", () => V.playing ? vpause() : vplay());
+  $("bigplay").addEventListener("click", vplay);
+  $("vreplay").addEventListener("click", () => { V.t = 0; vplay(); });
+  $("vseek").addEventListener("input", e => { V.t = Number(e.target.value); vrender(); });
+  $("chapters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; V.t = STEPS[b.dataset.i].t0 + 0.01; if (!V.playing) vplay(); else vrender(); });
+  vrender();
+
+  // ---------- Questions view (local RAG) ----------
+  const KB = [
+    { id: 1, src: "Profil", kw: "poste recherche cherche emploi type role metier objectif projet professionnel candidature", a: "Je cherche un poste d'AI Engineer ou de Data Scientist NLP, sur du traitement automatique du langage appliqué : extraction d'information, NER, classification de documents et LLM en production." },
+    { id: 2, src: "Contact", kw: "disponible disponibilite demarrer debut quand date salaire remuneration preavis pretention contrat teletravail mobilite", a: "Pour la disponibilité, la date de démarrage, le mode de travail et la rémunération, le plus simple est d'en parler directement. Écrivez-moi à solene.degrutere@orange.fr." },
+    { id: 3, src: "Parcours", kw: "parcours reconversion linguistique pourquoi ia histoire etudes chemin passage", a: "Mon parcours part de la linguistique : licence Sciences du langage à Limoges, puis master TAL à Toulouse, où j'ai appris la NER et l'apprentissage automatique. J'ai ensuite fait de la recherche NLP à la SNCF, une formation Data & IA chez Simplon, et je suis ingénieure IA chez PraxySanté depuis 2024. Mon regard de linguiste me sert encore pour analyser des textes et concevoir des schémas d'annotation." },
+    { id: 4, src: "Expérience PraxySanté", kw: "praxysante poste actuel actuellement entreprise startup medtech sante missions role quotidien", a: "Depuis septembre 2024, je suis ingénieure IA chez PraxySanté, une startup medtech. Je développe et maintiens les pipelines qui résument, classent et extraient l'information de documents médicaux, de l'API jusqu'au déploiement." },
+    { id: 5, src: "Expérience PraxySanté", kw: "production prod modele modeles mise en production deploiement deployer serveur mlops scaleway gunicorn uvicorn valkey asynchrone api fastapi", a: "Oui. Je maintiens une API FastAPI multi-pipeline en production (résumé, extraction, reformulation, classification). Je la déploie sur Scaleway avec Gunicorn et Uvicorn, avec des jobs asynchrones gérés par Valkey." },
+    { id: 6, src: "Expérience PraxySanté", kw: "encadrement encadrer manager management mentor apprenti apprentie autonomie autonome equipe seule responsabilite presentation etudiant pedagogie", a: "Je suis aujourd'hui la seule développeuse de l'équipe : je gère aussi les déploiements, j'encadre une apprentie et je présente nos travaux à des étudiants." },
+    { id: 7, src: "Compétences", kw: "test tests pytest code maintenance bonne pratique ci fiabilite", a: "J'ai mis en place des tests automatisés avec pytest sur l'API en production, et je m'en sers pour maintenir les pipelines sans régression." },
+    { id: 8, src: "Expérience PraxySanté", kw: "ner entite entites nommees reconnaissance annotation preannotation langgraph langchain label studio", a: "La NER est au cœur de mon travail. J'ai développé un workflow LLM avec LangGraph et LangChain pour pré-annoter des documents médicaux, avec un envoi vers Label Studio pour la relecture. J'ai aussi fine-tuné GLiNER pour la reconnaissance d'entités médicales." },
+    { id: 9, src: "Compétences", kw: "llm modele modeles langage mistral qwen llama openai gpt prompt prompting rag embeddings fireworks replicate generative ia generative", a: "J'orchestre plusieurs LLM en production : Mistral, Qwen et Llama, via Scaleway, Fireworks et Replicate. J'utilise aussi les API OpenAI et Mistral, le prompt engineering, le RAG et les embeddings." },
+    { id: 10, src: "Expérience PraxySanté", kw: "fine tuning finetuning entrainement entrainer bert gliner hugging face transformers pytorch optuna donnees synthetiques benchmark", a: "Oui. J'ai fine-tuné GLiNER (un modèle NER basé sur BERT) sur des données médicales synthétiques que j'ai générées et annotées, avec Hugging Face, PyTorch et Optuna, puis comparé les performances avant et après." },
+    { id: 11, src: "Expérience PraxySanté", kw: "classification classer document documents pipeline pdf docx txt benchmark mots cles extraction identite nir regex expressions regulieres regles metier", a: "J'ai construit un pipeline complet de traitement de documents médicaux (PDF, DOCX, TXT) et comparé quatre méthodes de classification : mots-clés, NER, machine learning et LLM. J'extrais aussi l'identité et le NIR en combinant LLM, règles métier et expressions régulières." },
+    { id: 12, src: "Expérience SNCF", kw: "sncf recherche accident accidents travail cause causes topic modeling clustering 2023 stage analyse linguistique", a: "En 2023, à la Direction de la Recherche de la SNCF, j'ai travaillé sur l'identification automatique des causes d'accidents du travail dans des déclarations en texte libre : état de l'art, analyse linguistique, puis classification, topic modeling et clustering." },
+    { id: 13, src: "Publication", kw: "publication article recherche scientifique conference taln coria deft qcm pharmacie", a: "Je suis coautrice d'un article présenté à CORIA-TALN 2023 sur la participation de notre équipe à DEFT 2023 : la réponse automatique à des QCM d'examens de pharmacie." },
+    { id: 14, src: "Compétences", kw: "machine learning ml classique scikit learn regression random forest xgboost svm knn naive bayes kmeans evaluation metrique precision rappel f1 validation croisee", a: "En machine learning classique, j'utilise scikit-learn et XGBoost : régressions, arbres de décision, Random Forest, gradient boosting, SVM, k-NN, Naive Bayes, k-means. J'évalue avec validation croisée, précision, rappel et F1." },
+    { id: 15, src: "Compétences", kw: "ocr parsing pdf scan scraping paddleocr pdfplumber pypdf beautifulsoup extraction texte", a: "Pour transformer des documents en texte, j'utilise pdfplumber, pypdf et PaddleOCR pour les scans, et BeautifulSoup pour le web scraping." },
+    { id: 16, src: "Langues", kw: "langue langues anglais english francais niveau bilingue international b2", a: "Le français est ma langue maternelle. Mon anglais est de niveau B2 : je lis et rédige sans difficulté de la documentation technique." },
+    { id: 17, src: "Savoir-être", kw: "qualite qualites soft skills savoir etre personnalite caractere force forces equipe relationnel curiosite rigueur autonomie communication", a: "On me reconnaît l'esprit d'équipe, un bon relationnel, de la curiosité et l'envie d'apprendre, de la rigueur et de l'autonomie. J'écris aussi clairement, en français comme en anglais." },
+    { id: 18, src: "Compétences", kw: "gestion projet agile scrum design thinking planification budget organisation chef cheffe rapport", a: "J'ai une formation de cheffe de projet IA : méthodes agiles, Design Thinking, planification, prévision budgétaire et structuration de projet. Je rédige aussi des rapports scientifiques et des analyses de données." },
+    { id: 19, src: "Projet FROODIES", kw: "froodies projet personnel recommandation restaurant restaurants streamlit chatbot application", a: "FROODIES est une application de recommandation de restaurants parisiens que j'ai créée en formation : interface Streamlit, données synthétiques, recommandation par similarité et chatbot intégré, le tout mené en Design Thinking." },
+    { id: 20, src: "Centres d'intérêt", kw: "hobby hobbies loisir loisirs passion interet theatre course sport semi marathon cuisine associatif temps libre", a: "Je fais du théâtre depuis dix ans et je vais souvent au spectacle. Je prépare un semi-marathon pour 2027, j'aime cuisiner et je m'engage dans la vie locale et associative." },
+    { id: 21, src: "Compétences", kw: "medical sante donnees sante hopital terminologie cim10 cim cim11 snomed clinique document medical domaine", a: "Oui, c'est mon domaine depuis 2024 : je traite des documents médicaux au quotidien et je connais les terminologies CIM-10, CIM-11 et SNOMED." },
+    { id: 22, src: "Formation", kw: "formation diplome diplomes etudes master licence universite toulouse limoges simplon ecole", a: "J'ai une licence Sciences du langage (Limoges, 2018-2021), un master Linguistique, Informatique et Technologie du Langage (Toulouse Jean Jaurès, 2021-2023) et une formation Data & IA Engineer chez Simplon (2024-2025)." },
+    { id: 23, src: "Contact", kw: "contact contacter joindre email mail telephone linkedin github coordonnees", a: "Vous pouvez m'écrire à solene.degrutere@orange.fr ou m'appeler au 06 48 44 42 72. Je suis aussi sur LinkedIn (solene-degrutere) et GitHub (soleneD05)." },
+    { id: 24, src: "Compétences", kw: "stack outils technologies langage programmation python docker git github uv poetry sql mongodb dbt jupyter figma r", a: "Ma stack quotidienne : Python, FastAPI, Docker, Git et uv. J'utilise aussi SQL, MongoDB, dbt, Jupyter, Poetry, Figma et R." },
+    { id: 25, src: "Expérience", kw: "experience annees combien ans seniorite junior niveau", a: "J'ai environ trois ans d'expérience en NLP : un an de recherche à la SNCF en 2023, puis PraxySanté depuis septembre 2024, d'abord en alternance puis en CDD, où je gère aujourd'hui seule la partie technique." }
+  ];
+  const STOP = new Set("le la les l un une des de du d et ou a au aux en dans pour par sur avec sans ce cet cette ces se sa son ses mon ma mes ton ta tes votre vos elle il je tu vous nous on qui que qu quoi quel quelle quels quelles est es sont ai as t ne n pas plus deja fait faire avoir eu etre y s c comment combien pourquoi quand moi toi lui leur leurs tout tous tres bien peut peux savoir dire parle parler aime".split(" "));
+  const tokz = str => str.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(/[^a-z0-9+]+/)
+    .filter(w => w && !STOP.has(w)).map(w => w.length > 4 && /[sx]$/.test(w) ? w.slice(0, -1) : w);
+  const IDX = KB.map(d => { const t = tokz(`${d.kw} ${d.kw} ${d.src} ${d.a}`); const tf = new Map(); t.forEach(w => tf.set(w, (tf.get(w) || 0) + 1)); return { d, tf, len: t.length }; });
+  const DF = new Map(); IDX.forEach(x => x.tf.forEach((_, w) => DF.set(w, (DF.get(w) || 0) + 1)));
+  const AVG = IDX.reduce((n, x) => n + x.len, 0) / IDX.length;
+  function bm25(q) {
+    const qt = [...new Set(tokz(q))];
+    const res = IDX.map(x => {
+      let sc = 0;
+      qt.forEach(w => {
+        const f = x.tf.get(w); if (!f) return;
+        const idf = Math.log(1 + (IDX.length - DF.get(w) + 0.5) / (DF.get(w) + 0.5));
+        sc += idf * (f * 2.4) / (f + 1.4 * (1 - 0.75 + 0.75 * x.len / AVG));
+      });
+      return { d: x.d, sc };
+    }).sort((a, b) => b.sc - a.sc);
+    return { qt, res };
+  }
+  $("kbinfo").textContent = `${KB.length} passages indexés · BM25`;
+  const SUGG = {
+    "Recruteur RH": ["Quel type de poste recherche-t-elle ?", "Quelles sont ses qualités ?", "Pourquoi être passée de la linguistique à l'IA ?", "A-t-elle déjà encadré quelqu'un ?", "Parle-t-elle anglais ?", "Quand est-elle disponible ?"],
+    "Recruteur tech": ["A-t-elle déjà mis des modèles en production ?", "Quelle expérience en NER ?", "Quels LLM a-t-elle utilisés ?", "A-t-elle fait du fine-tuning ?", "Comment teste-t-elle son code ?", "Combien d'années d'expérience ?"]
+  };
+  $("sugg").innerHTML = Object.entries(SUGG).map(([h, qs]) => `<h4>${h}</h4><div class="list">${qs.map(q => `<button type="button">${esc(q)}</button>`).join("")}</div>`).join("");
+  const thread = $("thread");
+  function ask(q) {
+    q = q.trim(); if (!q) return;
+    const { qt, res } = bm25(q);
+    const top = res[0], second = res[1];
+    let body, src;
+    if (!top || top.sc < 1.2) {
+      body = `<p>Je n'ai pas cette information dans mon parcours. Posez-moi la question directement : solene.degrutere@orange.fr.</p>`;
+      src = `Aucun passage assez pertinent (meilleur score ${top ? top.sc.toFixed(2) : "0"})`;
+    } else {
+      body = `<p>${esc(top.d.a)}</p>`;
+      if (second && second.sc >= top.sc * 0.8 && second.sc >= 1.2) body += `<p>${esc(second.d.a)}</p>`;
+      src = `Source : <b>${esc(top.d.src)}</b> · passage #${top.d.id} · score ${top.sc.toFixed(2)}`;
+    }
+    const max = top && top.sc > 0 ? top.sc : 1;
+    const hits = res.slice(0, 3).map(h => `<div class="hit"><span>#${h.d.id} ${esc(h.d.src)}</span><span class="num">${h.sc.toFixed(2)}</span><div class="track"><div class="fill" style="width:${(h.sc / max * 100).toFixed(0)}%"></div></div></div>`).join("");
+    thread.insertAdjacentHTML("beforeend", `<div class="msg q">${esc(q)}</div>
+      <div class="msg a"><div class="bubble">${body}</div><div class="src">${src}</div>
+      <details><summary>Voir le retrieval</summary><div class="ret"><div>${qt.length ? qt.map(t => `<span class="tok">${esc(t)}</span>`).join("") : "aucun token utile"}</div>${hits}</div></details></div>`);
+    thread.scrollTop = thread.scrollHeight;
+  }
+  $("sugg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) ask(b.textContent); });
+  $("askForm").addEventListener("submit", e => { e.preventDefault(); const i = $("askInput"); ask(i.value); i.value = ""; });
+  ask("Quel type de poste recherche-t-elle ?");
+
+  // Tabs + hash routing
+  const tabs = { ner: document.getElementById("tab-ner"), api: document.getElementById("tab-api"), video: document.getElementById("tab-video"), ask: document.getElementById("tab-ask") };
+  function show(v) {
+    for (const k in tabs) {
+      const on = k === v;
+      tabs[k].setAttribute("aria-selected", String(on));
+      document.getElementById("view-" + k).hidden = !on;
+    }
+    tip.hidden = true;
+    document.getElementById("aud").textContent = {
+      ner: "Pour tout le monde : mon parcours en texte, avec les entités repérées comme dans un outil d'annotation.",
+      api: "Pour les recruteurs tech : le même contenu servi comme une API FastAPI, à tester en direct.",
+      video: "Pour un aperçu en 36 secondes, à partager : mon CV passe dans mon propre pipeline.",
+      ask: "Pour les recruteurs RH comme tech : posez votre question, la réponse est retrouvée dans mon parcours."
+    }[v];
+    if (v !== "video" && V.playing) vpause();
+  }
+  tabs.ner.addEventListener("click", () => { show("ner"); history.replaceState(null, "", "#annotation"); });
+  tabs.api.addEventListener("click", () => { show("api"); history.replaceState(null, "", "#api"); });
+  tabs.video.addEventListener("click", () => { show("video"); history.replaceState(null, "", "#video"); });
+  tabs.ask.addEventListener("click", () => { show("ask"); history.replaceState(null, "", "#questions"); });
+  const route = () => show(location.hash === "#api" ? "api" : location.hash === "#video" ? "video" : location.hash === "#questions" ? "ask" : "ner");
+  addEventListener("hashchange", route); route();
+})();
+</script>
+
+</body>
+</html>
